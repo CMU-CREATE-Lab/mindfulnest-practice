@@ -2,6 +2,7 @@ package org.cmucreatelab.android.mindfulnest_practice
 
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -23,6 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower
+import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower.NotificationCallback
+import org.cmucreatelab.android.mindfulnest_practice.ble.squeeze.BleSqueeze
+import org.cmucreatelab.android.mindfulnest_practice.ble.wand.BleWand
 
 
 // Activity class definition
@@ -33,11 +38,85 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
     var isSqueezeConnected = true
     var isWandConnected = true
 
+    var isBreathing = false
+    var isSqueezing = false
+    var isWaving = false
+
+    val MAGNITUDE_FOR_WAVING = 999
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             InitScreen()
+        }
+
+        val globalHandler = GlobalHandler.getInstance(applicationContext)
+        if (globalHandler.bleFlower != null && globalHandler.bleFlower.isConnected) {
+            globalHandler.bleFlower.notificationCallback = object : BleFlower.NotificationCallback {
+                override fun onReceivedData(
+                    arg1: String,
+                    arg2: String,
+                    arg3: String,
+                    arg4: String,
+                    arg5: String
+                ) {
+                    //Log.v(Constants.LOG_TAG, String.format("FLOWER got values: %s,  %s,  %s,  %s,  %s", arg1, arg2, arg3, arg4, arg5))
+                    if (arg4.equals("1")) {
+                        // breath detected
+                        isBreathing = true;
+                    } else {
+                        isBreathing = false;
+                    }
+                    // update views
+                    setContent {
+                        InitScreen()
+                    }
+                }
+            }
+        }
+        if (globalHandler.bleSqueeze != null && globalHandler.bleSqueeze.isConnected) {
+            globalHandler.bleSqueeze.notificationCallback = object : BleSqueeze.NotificationCallback {
+                override fun onReceivedData(
+                    arg1: String
+                ) {
+                    if (arg1.equals("1")) {
+                        isSqueezing = true;
+                    } else {
+                        isSqueezing = false;
+                    }
+                    // update views
+                    setContent {
+                        InitScreen()
+                    }
+                }
+            }
+        }
+        if (globalHandler.bleWand != null && globalHandler.bleWand.isConnected) {
+            globalHandler.bleWand.notificationCallback = object : BleWand.NotificationCallback {
+                override fun onReceivedData(
+                    button: String,
+                    x: String,
+                    y: String,
+                    z: String
+                ) {
+                    // TODO convert
+                    val gx = Integer.parseInt(x)
+                    val gy = Integer.parseInt(y)
+                    val gz = Integer.parseInt(z)
+                    val gg = gx*gx + gy*gy + gz*gz;
+                    Log.v(Constants.LOG_TAG, String.format("WAND got values: %d <- (%s,  %s,  %s)", gg, x, y, z))
+                    if (gg > MAGNITUDE_FOR_WAVING) {
+                        isWaving = true;
+                    } else {
+                        isWaving = false;
+                    }
+                    // update views
+                    setContent {
+                        InitScreen()
+                    }
+                }
+            }
         }
     }
 
@@ -71,21 +150,21 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             if (isFlowerConnected) TViewGreeting(
-                isActive = true,
+                isActive = isBreathing,
                 name = "🌼",
                 modifier = Modifier
                     .padding(textPadding)
                     .weight(1f)
             )
             if (isSqueezeConnected) TViewGreeting(
-                isActive = true,
+                isActive = isSqueezing,
                 name = "🐏",
                 modifier = Modifier
                     .padding(textPadding)
                     .weight(1f)
             )
             if (isWandConnected) TViewGreeting(
-                isActive = true,
+                isActive = isWaving,
                 name = "🪄",
                 modifier = Modifier
                     .padding(textPadding)
@@ -101,21 +180,21 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             if (isFlowerConnected) TViewGreeting(
-                isActive = true,
+                isActive = isBreathing,
                 name = "🌼",
                 modifier = Modifier
                     .padding(textPadding)
                     .weight(1f)
             )
             if (isSqueezeConnected) TViewGreeting(
-                isActive = true,
+                isActive = isSqueezing,
                 name = "🐏",
                 modifier = Modifier
                     .padding(textPadding)
                     .weight(1f)
             )
             if (isWandConnected) TViewGreeting(
-                isActive = true,
+                isActive = isWaving,
                 name = "🪄",
                 modifier = Modifier
                     .padding(textPadding)
