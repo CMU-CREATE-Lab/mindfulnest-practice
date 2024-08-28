@@ -114,15 +114,14 @@ class TripleViewLayoutActivity : ConditionalLayoutActivity() {
             },
             object : UARTConnection.ConnectionListener {
                 override fun onConnected() {
-                    //TODO("Not yet implemented")
-                    Log.v(Constants.LOG_TAG, "onConnected");
+                    Log.v(Constants.LOG_TAG, "onConnected (flower)");
                     updateViews()
                 }
 
                 override fun onDisconnected() {
-                    //TODO("Not yet implemented")
-                    Log.v(Constants.LOG_TAG, "onDisconnected");
+                    Log.v(Constants.LOG_TAG, "onDisconnected (flower)");
                     updateViews()
+                    startBleScan()
                 }
             }
         )
@@ -132,15 +131,14 @@ class TripleViewLayoutActivity : ConditionalLayoutActivity() {
             },
             object : UARTConnection.ConnectionListener {
                 override fun onConnected() {
-                    //TODO("Not yet implemented")
                     Log.v(Constants.LOG_TAG, "onConnected (squeeze)");
                     updateViews()
                 }
 
                 override fun onDisconnected() {
-                    //TODO("Not yet implemented")
                     Log.v(Constants.LOG_TAG, "onDisconnected (squeeze)");
                     updateViews()
+                    startBleScan()
                 }
             }
         )
@@ -150,15 +148,14 @@ class TripleViewLayoutActivity : ConditionalLayoutActivity() {
             },
             object : UARTConnection.ConnectionListener {
                 override fun onConnected() {
-                    //TODO("Not yet implemented")
                     Log.v(Constants.LOG_TAG, "onConnected (wand)");
                     updateViews()
                 }
 
                 override fun onDisconnected() {
-                    //TODO("Not yet implemented")
                     Log.v(Constants.LOG_TAG, "onDisconnected (wand)");
                     updateViews()
+                    startBleScan()
                 }
             }
         )
@@ -174,15 +171,15 @@ class TripleViewLayoutActivity : ConditionalLayoutActivity() {
 
         // NOTE: avoid using UI thread for ble scans/connection
         AsyncTask.execute {
-            val globalHandler = GlobalHandler.getInstance(applicationContext)
-            // TODO check all
-            if (bleFlowerScanner.isFlowerDiscovered) {
-                //updateFlower(globalHandler.bleFlower)
-                // TODO get object?
-            } else {
-                //bleFlowerScanner.requestScan()
-                startBleScan()
-            }
+            startBleScan()
+
+//            val globalHandler = GlobalHandler.getInstance(applicationContext)
+//            if (bleFlowerScanner.isFlowerDiscovered && bleSqueezeScanner.isSqueezeConnected && bleWandScanner.isWandConnected) {
+//                //updateFlower(globalHandler.bleFlower)
+//                // TODO get objects?
+//            } else {
+//                startBleScan()
+//            }
         }
     }
 
