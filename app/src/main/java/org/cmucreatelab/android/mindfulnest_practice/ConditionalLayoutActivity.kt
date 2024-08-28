@@ -40,7 +40,7 @@ open class ConditionalLayoutActivity : AbstractActivity() {
     }
 
 
-    fun onClickButton() {
+    open fun onClickButton() {
         Log.v(Constants.LOG_TAG, "onClickButton")
         view1 = "view1"
         setContent {
