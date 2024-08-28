@@ -205,8 +205,8 @@ class TripleViewLayoutActivity : ConditionalLayoutActivity() {
 
     override fun onClickButton() {
         Log.v(Constants.LOG_TAG, "onClickButton")
-        //val sendIntent = Intent(this, TripleViewLayout2Activity::class.java)
-        val sendIntent = Intent(this, MainActivity::class.java)
+        val sendIntent = Intent(this, TripleViewLayout2Activity::class.java)
+        //val sendIntent = Intent(this, MainActivity::class.java)
         //sendIntent.putExtra("foo", "bar")
         startActivity(sendIntent)
     }
