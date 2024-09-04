@@ -1,5 +1,6 @@
 package org.cmucreatelab.android.mindfulnest_practice
 
+import android.content.res.Configuration
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -15,19 +16,24 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower
 import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower.NotificationCallback
 import org.cmucreatelab.android.mindfulnest_practice.ble.squeeze.BleSqueeze
 import org.cmucreatelab.android.mindfulnest_practice.ble.wand.BleWand
+import org.cmucreatelab.android.mindfulnest_practice.ui.theme.MindfulNestPracticeTheme
 
 
 // Activity class definition
@@ -43,6 +49,7 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
     var isWaving = false
 
     val MAGNITUDE_FOR_WAVING = 999
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -200,6 +207,37 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
                     .padding(textPadding)
                     .weight(1f)
             )
+        }
+    }
+
+    // TODO refactor (only needed override/copy to omit button)
+    @Composable
+    override fun InitScreen() {
+        val configuration = LocalConfiguration.current
+        MindfulNestPracticeTheme {
+            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.padding(innerPadding)) { innerPadding ->
+                    val textPadding = 10.dp
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+//                        Button(
+//                            onClick = { onClickButton() },
+//                            modifier = Modifier.align(Alignment.BottomEnd)
+//                        ) {
+//                            Text("Begin")
+//                        }
+                    }
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        ScreenPortrait(textPadding, innerPadding)
+                    } else {
+                        // Horizontal layout in landscape mode
+                        ScreenLandscape(textPadding, innerPadding)
+                    }
+                }
+            }
         }
     }
 

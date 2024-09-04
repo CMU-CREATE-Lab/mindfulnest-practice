@@ -70,7 +70,7 @@ open class ConditionalLayoutActivity : AbstractActivity() {
     }
 
     @Composable
-    fun InitScreen() {
+    open fun InitScreen() {
         val configuration = LocalConfiguration.current
         MindfulNestPracticeTheme {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
