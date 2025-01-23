@@ -2,8 +2,10 @@ package org.cmucreatelab.android.mindfulnest_practice
 
 import android.content.res.Configuration
 import android.os.AsyncTask
+import com.bumptech.glide.Glide
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -16,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower
-import org.cmucreatelab.android.mindfulnest_practice.ble.flower.BleFlower.NotificationCallback
 import org.cmucreatelab.android.mindfulnest_practice.ble.squeeze.BleSqueeze
 import org.cmucreatelab.android.mindfulnest_practice.ble.wand.BleWand
 import org.cmucreatelab.android.mindfulnest_practice.ui.theme.MindfulNestPracticeTheme
@@ -161,21 +163,24 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
                 name = "🌼",
                 modifier = Modifier
                     .padding(textPadding)
-                    .weight(1f)
+                    .weight(1f),
+                gifs = R.raw.flowerblow
             )
             if (isSqueezeConnected) TViewGreeting(
                 isActive = isSqueezing,
                 name = "🐏",
                 modifier = Modifier
                     .padding(textPadding)
-                    .weight(1f)
+                    .weight(1f),
+                gifs = R.raw.sheephug
             )
             if (isWandConnected) TViewGreeting(
                 isActive = isWaving,
                 name = "🪄",
                 modifier = Modifier
                     .padding(textPadding)
-                    .weight(1f)
+                    .weight(1f),
+                gifs = R.raw.wand
             )
         }
     }
@@ -189,6 +194,7 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
             if (isFlowerConnected) TViewGreeting(
                 isActive = isBreathing,
                 name = "🌼",
+                gifs = R.raw.flowerblow,
                 modifier = Modifier
                     .padding(textPadding)
                     .weight(1f)
@@ -198,14 +204,16 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
                 name = "🐏",
                 modifier = Modifier
                     .padding(textPadding)
-                    .weight(1f)
+                    .weight(1f),
+                gifs = R.raw.sheephug
             )
             if (isWandConnected) TViewGreeting(
                 isActive = isWaving,
                 name = "🪄",
                 modifier = Modifier
                     .padding(textPadding)
-                    .weight(1f)
+                    .weight(1f),
+                gifs = R.raw.wand
             )
         }
     }
@@ -242,26 +250,49 @@ class TripleViewLayout2Activity : ConditionalLayoutActivity() {
     }
 
     @Composable
-    fun TViewGreeting(isActive: Boolean, name: String, modifier: Modifier = Modifier) {
+    fun TViewGreeting(isActive: Boolean, name: String, modifier: Modifier = Modifier, gifs: Int) {
         //val backgroundColor = (if (isActive) Color.Green else Color.Red)
         val backgroundColor = Color.LightGray
         val displayText = (if (isActive) "$name✅" else "❌$name");
-        Text(
-            text = displayText,
+        val flowergifs = R.raw.flowerblow
+        val squeezegifs = R.raw.sheephug
+        val wandgifs = R.raw.wand
+        Box(
             modifier = modifier
-                .background(backgroundColor)
+                .background(Color.LightGray)
                 .fillMaxWidth()
                 .fillMaxHeight(),
-            textAlign = TextAlign.Center,
-            fontSize = 48.sp
-        )
-    }
+            contentAlignment = Alignment.Center
+        ) {
+            if (isActive) {
+                AndroidView(
+                    factory = { context ->
+                        ImageView(context).apply {
+                            Glide.with(context)
+                                .asGif()
+                                .load(gifs)
+                                .into(this)
+                        }
+                    },
+                    modifier = Modifier.size(150.dp)
+                )
+            } else {
+                Text(
+                    text = displayText,
+                    modifier = modifier
+                        .background(backgroundColor)
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 48.sp
+                )
+            }}}}
 
-    @Preview(name = "Landscape Mode", showBackground = true, widthDp = 640, heightDp = 360)
-    @Preview(name = "Portrait Mode", showBackground = true)
-    @Composable
-    override fun GreetingPreview() {
-        InitScreen()
-    }
+//   @Preview(name = "Landscape Mode", showBackground = true, widthDp = 640, heightDp = 360)
+//    @Preview(name = "Portrait Mode", showBackground = true)
+//    @Composable
+//    override fun GreetingPreview() {
+//        InitScreen()
+//    }
 
-}
+//}
